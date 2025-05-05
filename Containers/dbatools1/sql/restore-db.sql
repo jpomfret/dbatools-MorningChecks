@@ -9,7 +9,17 @@ RESTORE DATABASE [pubs] FROM  DISK = N'/tmp/pubs.bak' WITH  FILE = 1,  MOVE N'pu
 GO
 
 USE [master]
+RESTORE DATABASE [AdventureWorks2022] FROM DISK = '/tmp/AdventureWorks2022.bak' 
+WITH MOVE 'AdventureWorks2022' TO '/var/opt/mssql/data/AdventureWorks2022_Data.mdf', 
+    MOVE 'AdventureWorks2022_log' TO '/var/opt/mssql/data/AdventureWorks2022_log.ldf',
+    FILE = 1,
+    NOUNLOAD,
+    STATS = 5;
+GO
+
+USE [master]
 ALTER AUTHORIZATION ON DATABASE::[Northwind] TO [sqladmin]
 ALTER AUTHORIZATION ON DATABASE::[pubs] TO [sqladmin]
+ALTER AUTHORIZATION ON DATABASE::[AdventureWorks2022] TO [sqladmin]
 
 GO

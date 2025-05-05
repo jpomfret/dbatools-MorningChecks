@@ -237,10 +237,9 @@ Set-Content Function:prompt {
     return " "
 }
 
-######## wof setup
-# change the servernames to be dbatoosl - doesn't seem to work in the container build process right now
-Invoke-DbaQuery -SqlInstance $dbatools1 -Query "declare @oldSrv sysname; select @oldSrv = srvname from master.dbo.sysservers; EXEC sp_dropserver @oldSrv; EXEC sp_addserver 'dbatools1', local"
-Invoke-DbaQuery -SqlInstance $dbatools2 -Query "declare @oldSrv sysname; select @oldSrv = srvname from master.dbo.sysservers; EXEC sp_dropserver @oldSrv; EXEC sp_addserver 'dbatools2', local"
+# # change the servernames to be dbatoosl - doesn't seem to work in the container build process right now
+# Invoke-DbaQuery -SqlInstance $dbatools1 -Query "declare @oldSrv sysname; select @oldSrv = srvname from master.dbo.sysservers; EXEC sp_dropserver @oldSrv; EXEC sp_addserver 'dbatools1', local"
+# Invoke-DbaQuery -SqlInstance $dbatools2 -Query "declare @oldSrv sysname; select @oldSrv = srvname from master.dbo.sysservers; EXEC sp_dropserver @oldSrv; EXEC sp_addserver 'dbatools2', local"
 
 # clear out the export folder
 Get-ChildItem ./Export/ | Remove-item -Recurse
@@ -250,41 +249,9 @@ if(-not (Get-DbaDatabase -SqlInstance $dbatools1 -Database DatabaseAdmin)) {
     $null = New-DbaDatabase -SqlInstance $dbatools1 -Name DatabaseAdmin
 }
 
-# Begin ToTestRefresh preparation
-if(-not (Get-DbaDatabase -SqlInstance $dbatools1 -Database ToTestRefresh)) {
-    $null = New-DbaDatabase -SqlInstance $dbatools1 -Name ToTestRefresh -RecoveryModel Simple
-}
-
-if(-not (Get-DbaLogin -SqlInstance $dbatools1 -Login PRODLogin)) {
-    $null = New-DbaLogin -SqlInstance $dbatools1 -Login PRODLogin -SecurePassword $securePassword
-}
-
-if(-not (Get-DbaDbUser -SqlInstance $dbatools1 -Database ToTestRefresh -Login PRODLogin)) {
-    $null = New-DbaDbUser -SqlInstance $dbatools1 -Database ToTestRefresh -Username PRODLogin -Login PRODLogin
-}
-
-$toRefreshDemoCode = @"
-DROP TABLE IF EXISTS [dbo].[TestTable]
-
-CREATE TABLE [dbo].[TestTable] (
-    [ID] INT IDENTITY(1,1) PRIMARY KEY,
-    [Name] NVARCHAR(100) NOT NULL
-)
-
-INSERT INTO [dbo].[TestTable] ([Name])
-SELECT 'dbatools Wheel of Fortune'
-
-GRANT SELECT, INSERT, UPDATE, DELETE ON [dbo].[TestTable] TO [PRODLogin]
-
-ALTER ROLE [db_datawriter] ADD MEMBER [PRODLogin]
-"@
-
-Invoke-DbaQuery -SqlInstance dbatools1 -Database "ToTestRefresh" -Query $toRefreshDemoCode
-# End ToTestRefresh preparation
-
 $dbs = @{
     SqlInstance = $dbatools1
-    Database    = 'Northwind','Pubs'
+    Database    = 'Northwind','Pubs','AdventureWorks2022'
 }
 
 # set recovery model to full
