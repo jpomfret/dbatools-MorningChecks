@@ -1,6 +1,6 @@
 version: "3"
 services:
-    dbatools1:v0.3.0
+    dbatools1:
       image: jpomfret7/dbatools1:v0.3.0
       volumes:
         - mydata:/var/opt/backups
@@ -12,7 +12,7 @@ services:
       container_name: dbatools1
       hostname: dbatools1
       
-    dbatools2:v0.3.0
+    dbatools2:
       image: jpomfret7/dbatools2:v0.3.0
       volumes:
         - mydata:/var/opt/backups

@@ -26,7 +26,7 @@ jobs:
         env:
           DEFAULT_BUMP: minor
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
+          WITH_V: false
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3.6.0
@@ -58,15 +58,15 @@ jobs:
         name: Find and Replace
         uses: jacobtomlinson/gha-find-replace@v3
         with:
-          find: "dbatools1:.*"
-          replace: "dbatools1:${{ steps.bump.outputs.new_tag }}"
+          find: "dbatools1:v.*"
+          replace: "dbatools1:v${{ steps.bump.outputs.new_tag }}"
           include: ".devcontainer/docker-compose.yml" 
       -
         name: Find and Replace Instance2
         uses: jacobtomlinson/gha-find-replace@v3
         with:
-          find: "dbatools2:.*"
-          replace: "dbatools2:${{ steps.bump.outputs.new_tag }}"
+          find: "dbatools2:v.*"
+          replace: "dbatools2:v${{ steps.bump.outputs.new_tag }}"
           include: ".devcontainer/docker-compose.yml" 
       
       -
