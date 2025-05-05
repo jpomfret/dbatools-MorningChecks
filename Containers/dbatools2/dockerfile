@@ -1,0 +1,52 @@
+###
+#
+#   temp/builder image: add users, logins, databases, etc
+#
+###
+
+# get the latest SQL container and set it as the builder image
+FROM mcr.microsoft.com/mssql/server:2022-latest as builder
+# Note Starting with SQL Server 2022 CU 14, we are updating SQL Server 2022 container images to include the new mssql-tools18 package
+# if we use a later version we need to work out how to add sqlcmd to the path 
+
+# switch to root to a bunch of stuff that requires elevated privs
+USER root
+
+# set the pwd and chown to the service account
+WORKDIR /tmp
+RUN chown mssql /tmp
+
+# copy scripts and make bash files executable
+# use copy instead of add, it's safer apparently
+COPY sql scripts /tmp/
+RUN chmod +x /tmp/*.sh
+
+# convert CRLF to LF in case Windows or VS Code changed it
+RUN find . -type f \( -name "*.sql" -o -name "*.env" -o -name "*.sh" \) -exec sed -i 's/\r$//' {} \;
+
+# switch to user mssql or the container will fail
+USER mssql
+
+# run initial setup scripts
+RUN /bin/bash /tmp/start-sql.sh
+
+###
+#
+#   final image: grab the good stuff, label
+#   the image, and startup the sql instance
+#
+###
+
+# copy the required changed files from "builder"
+# and use it to start from scratch
+FROM mcr.microsoft.com/mssql/server:2022-latest
+COPY --from=builder /var/opt/mssql /var/opt/mssql
+
+# make a shared dir with the proper permissions
+USER root
+RUN  mkdir /shared; chown mssql /shared
+
+# running as root because of permission weirdness TODO: change back to `USER mssql`
+USER root
+ENTRYPOINT /opt/mssql/bin/sqlservr
+# CMD exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"
