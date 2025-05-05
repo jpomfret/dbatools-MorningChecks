@@ -20,6 +20,7 @@ export SQLCMDUSER=sqladmin
 # the size of the context and makes the secondary image smaller
 wget https://github.com/sqlcollaborative/docker/raw/a61d8e1ffb150cae767c27737ad07e730d4e76dd/sqlinstance/sql/northwind.bak
 wget https://github.com/sqlcollaborative/docker/raw/a61d8e1ffb150cae767c27737ad07e730d4e76dd/sqlinstance/sql/pubs.bak
+wget https://github.com/Microsoft/sql-server-samples/releases/download/adventureworks/AdventureWorks2022.bak
 /opt/mssql-tools18/bin/sqlcmd -S localhost -d master -i /tmp/restore-db.sql -C -No
 /opt/mssql-tools18/bin/sqlcmd -S localhost -d master -i /tmp/create-objects.sql -C -No
 /opt/mssql-tools18/bin/sqlcmd -S localhost -d master -i /tmp/create-regserver.sql -C -No
