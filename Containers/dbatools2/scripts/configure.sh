@@ -23,3 +23,9 @@ export SQLCMDUSER=sqladmin
 
 # import the certificate and creates endpoint 
 /opt/mssql-tools18/bin/sqlcmd -S localhost -d master -i /tmp/create-endpoint.sql -No
+
+# add databases
+/opt/mssql-tools18/bin/sqlcmd -S localhost -d master -i /tmp/add-databases.sql -No
+
+# add maintenance jobs
+/opt/mssql-tools18/bin/sqlcmd -S localhost -d master -i /tmp/create-objects.sql -C -No

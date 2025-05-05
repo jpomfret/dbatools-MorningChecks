@@ -14,12 +14,14 @@ $Global:PSDefaultParameterValues = @{
 }
 #endregion
 
+#region Clean up
 Remove-Item '/var/opt/backups/dbatools1' -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item '/shared' -Recurse -Force -ErrorAction SilentlyContinue
+#endregion
 
 Import-Module Pansies
 
-######## POSH-GIT
+#region POSH-GIT
 # with props to https://bradwilson.io/blog/prompt/powershell
 # ... Import-Module for posh-git here ...
 Import-Module posh-git
@@ -236,30 +238,7 @@ Set-Content Function:prompt {
     # Always have to return something or else we get the default prompt
     return " "
 }
-
-# # change the servernames to be dbatoosl - doesn't seem to work in the container build process right now
-# Invoke-DbaQuery -SqlInstance $dbatools1 -Query "declare @oldSrv sysname; select @oldSrv = srvname from master.dbo.sysservers; EXEC sp_dropserver @oldSrv; EXEC sp_addserver 'dbatools1', local"
-# Invoke-DbaQuery -SqlInstance $dbatools2 -Query "declare @oldSrv sysname; select @oldSrv = srvname from master.dbo.sysservers; EXEC sp_dropserver @oldSrv; EXEC sp_addserver 'dbatools2', local"
+#endregion 
 
 # clear out the export folder
 Get-ChildItem ./Export/ | Remove-item -Recurse
-
-# create DatabaseAdmin database
-if(-not (Get-DbaDatabase -SqlInstance $dbatools1 -Database DatabaseAdmin)) {
-    $null = New-DbaDatabase -SqlInstance $dbatools1 -Name DatabaseAdmin
-}
-
-$dbs = @{
-    SqlInstance = $dbatools1
-    Database    = 'Northwind','Pubs','AdventureWorks2022'
-}
-
-# set recovery model to full
-if ((Get-DbaDbRecoveryModel @dbs).RecoveryModel -ne 'Full') {
-    $null = Set-DbaDbRecoveryModel @dbs -RecoveryModel Full
-}
-
-# do some backups - stash the full incase we need to restore
-$global:fullBackup = Backup-DbaDatabase @dbs -Type Full
-$null = Backup-DbaDatabase @dbs -Type Differential
-$null = Backup-DbaDatabase @dbs -Type Log

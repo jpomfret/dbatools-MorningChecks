@@ -23,3 +23,6 @@ ALTER AUTHORIZATION ON DATABASE::[pubs] TO [sqladmin]
 ALTER AUTHORIZATION ON DATABASE::[AdventureWorks2022] TO [sqladmin]
 
 GO
+
+CREATE DATABASE DatabaseAdmin
+GO
