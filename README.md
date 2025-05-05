@@ -17,4 +17,3 @@ I’ll then generate a beautiful HTML email and status page that shows you the r
 This session will give you the structure needed to check anything that you can write a script for, the possibilities are as wide as your imagination.
 
 Join me as we automate our morning checklists.
-

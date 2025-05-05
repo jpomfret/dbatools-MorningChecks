@@ -77,9 +77,9 @@ RUN echo "export HISTFILE=/commandhistory/.bash_history" >> "/root/.bashrc" \
 SHELL ["/usr/bin/pwsh", "-c"]
 RUN $ErrorActionPreference='Stop'; Install-Module -Name Pester -Force -SkipPublisherCheck -MaximumVersion 4.10.1;
 
-# Install dbatools prerelease
+# Install Pester, latest
 SHELL ["/usr/bin/pwsh", "-c"]
-RUN $ErrorActionPreference='Stop'; Install-Module -Name dbatools -Force -AllowPreRelease;
+RUN $ErrorActionPreference='Stop'; Install-Module -Name Pester -Force -SkipPublisherCheck;
 
 # Install dbatools,PSFramework,dbachecks,posh-git,ImportExcel, Pansies
 SHELL ["/usr/bin/pwsh", "-c"]

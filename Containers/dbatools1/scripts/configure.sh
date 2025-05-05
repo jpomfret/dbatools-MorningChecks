@@ -25,3 +25,4 @@ wget https://github.com/sqlcollaborative/docker/raw/a61d8e1ffb150cae767c27737ad0
 /opt/mssql-tools18/bin/sqlcmd -S localhost -d master -i /tmp/create-regserver.sql -C -No
 # import the certificate and creates endpoint 
 /opt/mssql-tools18/bin/sqlcmd -S localhost -d master -i /tmp/create-endpoint.sql -C -No
+
