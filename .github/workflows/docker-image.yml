@@ -16,7 +16,7 @@ jobs:
       pull-requests: write
       repository-projects: write
     steps:
-      - uses: actions/checkout@v4.2.2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: '0'
       - 
@@ -54,6 +54,21 @@ jobs:
           push: true
           context: Containers/dbatools2/
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dbatools2:${{ steps.bump.outputs.new_tag }},${{ secrets.DOCKERHUB_USERNAME }}/dbatools2:latest
+      -
+        name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "dbatools1:.*"
+          replace: "dbatools1:${{ steps.bump.outputs.new_tag }}"
+          include: ".devcontainer/docker-compose.yml" 
+      -
+        name: Find and Replace Instance2
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "dbatools2:.*"
+          replace: "dbatools2:${{ steps.bump.outputs.new_tag }}"
+          include: ".devcontainer/docker-compose.yml" 
+      
       -
         name: Add & Commit
         uses: EndBug/add-and-commit@v9.1.4
