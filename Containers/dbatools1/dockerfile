@@ -5,7 +5,7 @@
 ###
 
 # get the latest SQL container and set it as the builder image
-FROM mcr.microsoft.com/mssql/server:2022-latest AS builder
+FROM mcr.microsoft.com/mssql/server:2025-latest AS builder
 
 # switch to root to a bunch of stuff that requires elevated privs
 USER root
