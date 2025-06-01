@@ -73,17 +73,13 @@ RUN echo "export HISTFILE=/commandhistory/.bash_history" >> "/root/.bashrc" \
     && mkdir -p /commandhistory \
     && touch /commandhistory/.bash_history
 
-# Install Pester, 4.10.1
-SHELL ["/usr/bin/pwsh", "-c"]
-RUN $ErrorActionPreference='Stop'; Install-Module -Name Pester -Force -SkipPublisherCheck -MaximumVersion 4.10.1;
-
 # Install Pester, latest
 SHELL ["/usr/bin/pwsh", "-c"]
 RUN $ErrorActionPreference='Stop'; Install-Module -Name Pester -Force -SkipPublisherCheck;
 
-# Install dbatools,PSFramework,dbachecks,posh-git,ImportExcel, Pansies
+# Install dbatools,PSFramework,dbachecks,posh-git,ImportExcel, Pansies, FabricTools
 SHELL ["/usr/bin/pwsh", "-c"]
-RUN $ErrorActionPreference='Stop'; Install-Module -Name dbatools,PSFramework,dbachecks,posh-git,Microsoft.PowerShell.ConsoleGuiTools,ImportExcel,Pansies,pshtml -Force -SkipPublisherCheck;
+RUN $ErrorActionPreference='Stop'; Install-Module -Name dbatools,PSFramework,dbachecks,posh-git,Microsoft.PowerShell.ConsoleGuiTools,ImportExcel,Pansies,pshtml,FabricTools -Force -SkipPublisherCheck;
 
 # set the dbatools config to not require encryption - change in SMO
 SHELL ["/usr/bin/pwsh", "-c"]
