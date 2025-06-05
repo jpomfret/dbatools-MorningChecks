@@ -30,5 +30,11 @@ Select-Object SqlInstance, Database, ActualState, QueryCaptureMode
 Test-DbaDbQueryStore -SqlInstance dbatools1, dbatools2 | 
 Select-Object SqlInstance, Database, Name, Value, IsBestPractice
 
+# Test ownership of databases
+Test-DbaDbOwner -SqlInstance dbatools1, dbatools2 | 
+Select-Object SqlInstance, Database, TargetOwner, OwnerMatch
 
-
+# What about compatibility levels?
+Test-DbaDbCompatibility -SqlInstance dbatools1, dbatools2 |
+Where-Object { -not $_.IsEqual } |
+Select-Object SqlInstance, Database, ServerLevel, DatabaseCompatibility, IsEqual

@@ -22,8 +22,9 @@ $html = html {
             p -Content 'This is a simple paragraph'
     }
 }
-$html | Out-File -FilePath simplePage.html
+$html | Out-File -FilePath .\web\simplePage.html
 
+code ./web/simplePage.html
 # open, format, preview
 
 # we can also use PSHTML to easily create tables
@@ -49,6 +50,7 @@ $data = @(
 
 ConvertTo-PSHTMLTable -Object $data | Out-File ./web/table.html
 
+code ./web/table.html
 # open, format, preview
 
 # but it's still not really beautiful - add some CSS
