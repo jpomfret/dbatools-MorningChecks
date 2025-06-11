@@ -9,3 +9,17 @@ describe "SQL Instances are alive" -ForEach $instances {
     }
 }
 
+describe "Web folder is empty" {
+    it "Web folder should not have any files" {
+        $webFiles = Get-ChildItem -Path ./web/* -ErrorAction SilentlyContinue
+        $webFiles | Should -BeNullOrEmpty
+    }
+}
+
+describe "Fabric Workspaces" {
+    it "Should have at least one Fabric Workspace" {
+        $workspaces = Get-FabricWorkspace
+        $workspaces | Should -Not -BeNullOrEmpty
+    }
+}
+

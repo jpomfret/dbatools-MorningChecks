@@ -1,4 +1,3 @@
-# Enter a community module
 Import-Module PSHTML
 
 # Commands available
@@ -47,6 +46,7 @@ $data = @(
             Location = 'UK'
     }
 )
+$data
 
 ConvertTo-PSHTMLTable -Object $data | Out-File ./web/table.html
 
@@ -105,10 +105,10 @@ table.paleBlueRows tfoot td {
 
 $html = html {
     head {
-            style {
-                $css
-                }
+        style {
+            $css
             }
+        }
     body {
         h1 {"Beautiful Table Report: {0}" -f (Get-Date -f 'yyyy-MM-dd')}
         ConvertTo-PSHTMLTable -Object $data -TableClass paleBlueRows
@@ -134,8 +134,8 @@ SELECT TOP (10) [au_id]
 
 $querySplat = @{
     SqlInstance     = $sqlInstance
-    Database            = $database
-    Query            = $query
+    Database        = $database
+    Query           = $query
     EnableException = $true
 }
 $results = Invoke-DbaQuery @querySplat
@@ -148,9 +148,9 @@ $results
 
 $html = html {
     head {
-            style {
-                $css
-            }
+        style {
+            $css
+        }
     }
     body {
     h1 {"Beautiful Table Report: {0}" -f (Get-Date -f 'yyyy-MM-dd')}}
@@ -161,3 +161,5 @@ $html = html {
     ConvertTo-PSHTMLTable -Object $results -TableClass paleBlueRows
 }
 $html | Out-File .\web\table.html
+
+#30:00

@@ -1,3 +1,4 @@
+
 ## Email details
 $emailTo = 'me@jesspomfret.com','team@jesspomfret.com'
 $emailFrom = 'reports@jesspomfret.com'
@@ -80,8 +81,10 @@ if($backupIssues) {
     }
     $body += ConvertTo-PSHTMLTable @table
 }
+
 # Query Store status
-$queryStoreStatus = Get-DbaDbQueryStoreOption -SqlInstance dbatools1, dbatools2 | Where-Object { $_.ActualState -ne 'ReadWrite' } -WarningAction Ignore
+$queryStoreStatus = Get-DbaDbQueryStoreOption -SqlInstance dbatools1, dbatools2 | 
+Where-Object { $_.ActualState -ne 'ReadWrite' } -WarningAction Ignore
 if($queryStoreStatus) {
     $body += h2 { "Query Store Status" }
 
@@ -102,14 +105,15 @@ $summary = ul {
 # Now you just build the html, adding the things you care about
 $html = html {
     head {
-            style {
-                $css
-            }
+        style {
+            $css
+        }
     }
     body {
         h1 {("Morning Checks Report: {0}" -f (get-date -f 'yyyy-MM-dd'))}
         p {
             "This report contains the results of the morning checks performed on the SQL Server instances."
+            #TODO: add sql instance list
         }
         h2 { "Summary" }
         $summary
@@ -119,3 +123,5 @@ $html = html {
 }
 
 $html  > ./web/morning-checks-report.html
+
+#36:00

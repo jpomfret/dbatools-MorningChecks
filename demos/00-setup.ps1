@@ -1,3 +1,5 @@
+Import-Module dbatools, pester, pshtml, fabrictools
+
 Install-DbaMaintenanceSolution -SqlInstance dbatools2 -BackupLocation /shared/ -InstallJobs -AutoScheduleJobs WeeklyFull -Confirm:$false
 
 # offline some random dbs
@@ -20,4 +22,9 @@ Foreach-Object {
 
 Get-DbaAgentJob -SqlInstance dbatools2 -Job 'DatabaseBackup - USER_DATABASES - FULL' | Start-DbaAgentJob -Confirm:$false
 
-Invoke-Pester ./demos/tests
+# clear out web folder
+Get-ChildItem -Path ./web/* | Remove-Item
+
+Connect-AzAccount -UseDeviceAuthentication
+
+Invoke-Pester ./demos/tests -Output Detailed

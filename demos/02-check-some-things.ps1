@@ -1,4 +1,4 @@
-# Are the databases in the expected date?
+# Are the databases in the expected state?
 Get-DbaDatabase -SqlInstance dbatools1, dbatools2 |
 Select-Object SqlInstance, Name, Status, ReadOnly | 
 Format-Table -AutoSize
@@ -32,9 +32,13 @@ Select-Object SqlInstance, Database, Name, Value, IsBestPractice
 
 # Test ownership of databases
 Test-DbaDbOwner -SqlInstance dbatools1, dbatools2 | 
-Select-Object SqlInstance, Database, TargetOwner, OwnerMatch
+Select-Object SqlInstance, Database, CurrentOwner, TargetOwner, OwnerMatch |
+Format-Table -AutoSize
 
 # What about compatibility levels?
 Test-DbaDbCompatibility -SqlInstance dbatools1, dbatools2 |
 Where-Object { -not $_.IsEqual } |
 Select-Object SqlInstance, Database, ServerLevel, DatabaseCompatibility, IsEqual
+
+
+# 21:30
