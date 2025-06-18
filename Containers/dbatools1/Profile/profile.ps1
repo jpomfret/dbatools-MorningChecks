@@ -31,39 +31,40 @@ Import-Module ImportExcel
 
 # first time it runs it warns about the libraries
 $test | Export-Excel -Path .\export\test.xlsx -WarningVariable warn
-Remove-Item .\export\test.xlsx 
+
 
 $ShowError = $false
 $ShowKube = $false
 $ShowAzure = $false
 $ShowAzureCli = $false
 $ShowGit = $false
-$ShowPath = $true
-$ShowDate = $true
+$ShowPath = $false
+$ShowDate = $false
 $ShowTime = $true
-$ShowUser = $true
+$ShowUser = $false
+
 # Background colors
 
-$GitPromptSettings.AfterStash.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.AfterStatus.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.BeforeIndex.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.BeforeStash.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.BeforeStatus.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.BranchAheadStatusSymbol.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.BranchBehindAndAheadStatusSymbol.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.BranchBehindStatusSymbol.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.BranchColor.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.BranchGoneStatusSymbol.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.BranchIdenticalStatusSymbol.BackgroundColor = [ConsoleColor]::DarkGray
+$GitPromptSettings.AfterStash.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.AfterStatus.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.BeforeIndex.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.BeforeStash.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.BeforeStatus.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.BranchAheadStatusSymbol.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.BranchBehindAndAheadStatusSymbol.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.BranchBehindStatusSymbol.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.BranchColor.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.BranchGoneStatusSymbol.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.BranchIdenticalStatusSymbol.BackgroundColor = [ConsoleColor]::LightGray
 $GitPromptSettings.DefaultColor.BackgroundColor = [ConsoleColor]::DarkCyan
-$GitPromptSettings.DelimStatus.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.ErrorColor.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.IndexColor.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.LocalDefaultStatusSymbol.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.LocalStagedStatusSymbol.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.LocalWorkingStatusSymbol.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.StashColor.BackgroundColor = [ConsoleColor]::DarkGray
-$GitPromptSettings.WorkingColor.BackgroundColor = [ConsoleColor]::DarkGray
+$GitPromptSettings.DelimStatus.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.ErrorColor.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.IndexColor.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.LocalDefaultStatusSymbol.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.LocalStagedStatusSymbol.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.LocalWorkingStatusSymbol.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.StashColor.BackgroundColor = [ConsoleColor]::LightGray
+$GitPromptSettings.WorkingColor.BackgroundColor = [ConsoleColor]::LightGray
 
 # Foreground colors
 
@@ -96,7 +97,7 @@ $GitPromptSettings.ShowStatusWhenZero = $false
 ######## PROMPT
 Set-Content Function:prompt {
     if ($ShowDate) {
-        Write-Host " $(Get-Date -Format "ddd dd MMM HH:mm:ss")" -ForegroundColor Black -BackgroundColor DarkGray -NoNewline
+        Write-Host " $(Get-Date -Format "ddd dd MMM HH:mm:ss")" -ForegroundColor Black -BackgroundColor LightGray -NoNewline
     }
 
     # Reset the foreground color to default
@@ -131,7 +132,7 @@ Set-Content Function:prompt {
 
             $nodename = ($nodes.items.metadata | where labels  -Like '*master*').name
             Write-Host " " -NoNewline
-            Write-Host "" -NoNewline -BackgroundColor DarkGray -ForegroundColor Green
+            Write-Host "" -NoNewline -BackgroundColor LightGray -ForegroundColor Green
             #Write-Host " $currentContext " -NoNewLine -BackgroundColor DarkYellow -ForegroundColor Black
             Write-Host " $([char]27)[38;5;112;48;5;242m  $([char]27)[38;5;254m$currentContext - $nodename $([char]27)[0m" -NoNewline
         }
@@ -183,7 +184,7 @@ Set-Content Function:prompt {
             $currentPath = $($pwd.path.Split('\')[-2..-1] -join '\')
         }
         Write-Host " " -NoNewline
-        Write-Host "$([char]27)[38;5;227;48;5;28m  $([char]27)[38;5;254m$currentPath $([char]27)[0m " -NoNewline -BackgroundColor DarkGreen -ForegroundColor Black
+        Write-Host "$([char]27)[38;5;227;48;5;28m  $([char]27)[38;5;254m$currentPath $([char]27)[0m " -NoNewline -BackgroundColor DarkGreen -ForegroundColor LightGray
 
     }
     # Reset LASTEXITCODE so we don't show it over and over again
@@ -196,9 +197,9 @@ Set-Content Function:prompt {
             if ($history) {
                 if (([System.Management.Automation.PSTypeName]'Sqlcollaborative.Dbatools.Utility.DbaTimeSpanPretty').Type) {
                     $timemessage = " " + ( [Sqlcollaborative.Dbatools.Utility.DbaTimeSpanPretty]($history[-1].EndExecutionTime - $history[-1].StartExecutionTime))
-                    Write-Host $timemessage -ForegroundColor DarkYellow -BackgroundColor DarkGray -NoNewline
+                    Write-Host $timemessage -ForegroundColor DarkYellow -BackgroundColor LightGray -NoNewline
                 } else {
-                    Write-Host " $([Math]::Round(($history[-1].EndExecutionTime - $history[-1].StartExecutionTime).TotalMilliseconds,2))" -ForegroundColor DarkYellow -BackgroundColor DarkGray  -NoNewline
+                    Write-Host " $([Math]::Round(($history[-1].EndExecutionTime - $history[-1].StartExecutionTime).TotalMilliseconds,2))" -ForegroundColor DarkYellow -BackgroundColor LightGray  -NoNewline
                 }
             }
             Write-Host " " -ForegroundColor DarkBlue -NoNewline
