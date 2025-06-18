@@ -51,5 +51,3 @@ $html = html {
 }
 
 $html  > ./web/morning-checks-report.html
-
-# 3800

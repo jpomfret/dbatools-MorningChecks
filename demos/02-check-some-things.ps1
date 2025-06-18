@@ -4,8 +4,10 @@ Select-Object SqlInstance, Name, Status, ReadOnly |
 Format-Table -AutoSize
 
 # Are there any databases that are not in the expected state?
-Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | Where-Object { $_.status -ne 'Normal' } | 
-Select-Object SqlInstance, Name, Status | Format-Table -AutoSize
+Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | 
+Where-Object { $_.status -ne 'Normal' } | 
+Select-Object SqlInstance, Name, Status | 
+Format-Table -AutoSize
 
 # are we doing backups?
 Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | 
@@ -16,10 +18,10 @@ Format-Table -AutoSize
 # I only care if
     # LastBackupDate is older than 7 days
     # LastDiffBackup is older than 1 day
-    # LastLogBackup is older than 15 minutes
-Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | 
-Where-Object { $_.LastBackupDate -lt (Get-Date).AddDays(-7) -or $_.LastDiffBackup -lt (Get-Date).AddDays(-1) -or $_.LastLogBackup -lt (Get-Date).AddMinutes(-15) } |
-Select-Object SqlInstance, Name, LastBackupDate, LastDiffBackup, LastLogBackup | 
+    # LastLogBackup is older than 15 minutes - if database is in FULL recovery model
+Get-DbaDatabase -SqlInstance dbatools1, dbatools2 -ExcludeDatabase tempdb | 
+Where-Object { $_.LastBackupDate -lt (Get-Date).AddDays(-7) -or $_.LastDiffBackup -lt (Get-Date).AddDays(-1) -or ($_.RecoveryModel -eq 'Full' -and $_.LastLogBackup -lt (Get-Date).AddMinutes(-15)) } |
+Select-Object SqlInstance, Name, RecoveryModel, LastBackupDate, LastDiffBackup, LastLogBackup | 
 Format-Table -AutoSize
 
 # Is Query Store enabled on all databases?
@@ -39,6 +41,3 @@ Format-Table -AutoSize
 Test-DbaDbCompatibility -SqlInstance dbatools1, dbatools2 |
 Where-Object { -not $_.IsEqual } |
 Select-Object SqlInstance, Database, ServerLevel, DatabaseCompatibility, IsEqual
-
-
-# 21:30

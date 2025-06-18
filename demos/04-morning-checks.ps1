@@ -69,8 +69,12 @@ if($dbState) {
 }
 
 # Databases without backups
-$backupIssues = Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | 
-Where-Object { $_.LastBackupDate -lt (Get-Date).AddDays(-7) -or $_.LastDiffBackup -lt (Get-Date).AddDays(-1) -or $_.LastLogBackup -lt (Get-Date).AddMinutes(-15) }
+$backupIssues = Get-DbaDatabase -SqlInstance dbatools1, dbatools2 -Database msdb,master,model | 
+Where-Object { $_.LastBackupDate -lt (Get-Date).AddDays(-1) }
+
+$backupIssues += Get-DbaDatabase -SqlInstance dbatools1, dbatools2 -ExcludeSystem | 
+Where-Object { $_.LastBackupDate -lt (Get-Date).AddDays(-7) -or $_.LastDiffBackup -lt (Get-Date).AddDays(-1) -or ($_.RecoveryModel -eq 'Full' -and $_.LastLogBackup -lt (Get-Date).AddMinutes(-15)) }
+
 if($backupIssues) {
     $body += h2 { "Databases with Backup Issues" }
 
@@ -102,7 +106,7 @@ $summary = ul {
     li { ("Query Store Issues: {0}" -f $queryStoreStatus.Count) }
 }
 
-# Now you just build the html, adding the things you care about
+# Now you just build the html
 $html = html {
     head {
         style {
@@ -123,5 +127,3 @@ $html = html {
 }
 
 $html  > ./web/morning-checks-report.html
-
-#36:00

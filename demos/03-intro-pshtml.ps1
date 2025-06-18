@@ -161,5 +161,3 @@ $html = html {
     ConvertTo-PSHTMLTable -Object $results -TableClass paleBlueRows
 }
 $html | Out-File .\web\table.html
-
-#30:00
