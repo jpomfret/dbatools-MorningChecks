@@ -57,3 +57,9 @@ Only way to properly rebuild to ensure that all volumes etc are removed is to
 cd to .devcontainer in a diff window
 
 `docker-compose -f "docker-compose.yml" -p "dbatools-morningchecks_devcontainer" down`
+
+## Future Ideas
+ - Add demo about exclusions/different thresholds.
+ - Add just one example with (different) credentials
+
+   
