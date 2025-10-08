@@ -4,7 +4,7 @@ Import-Module PSHTML
 Get-Command -Module PSHTML
 
 # Let's create a simple heading
-h1 -Content 'Hi SQLBits 2025'
+h1 -Content 'Hi dataminds 2025'
 
 # We can also create a simple paragraph
 p -Content 'This is a simple paragraph'
@@ -17,7 +17,7 @@ $html = html {
             title 'My First PSHTML Page'
     }
     body {
-            h1 -Content 'Hi SQLBits 2025'
+            h1 -Content 'Hi dataminds 2025'
             p -Content 'This is a simple paragraph'
     }
 }
