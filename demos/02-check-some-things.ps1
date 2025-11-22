@@ -1,12 +1,24 @@
+########################
+# 2. Check some things #
+########################
+
 # Are the databases in the expected state?
 Get-DbaDatabase -SqlInstance dbatools1, dbatools2 |
 Select-Object SqlInstance, Name, Status, ReadOnly | 
 Format-Table -AutoSize
 
 # Are there any databases that are not in the expected state?
+# not normal
 Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | 
 Where-Object { $_.status -ne 'Normal' } | 
 Select-Object SqlInstance, Name, Status | 
+Format-Table -AutoSize
+
+# Are there any databases that are not in the expected state?
+# not normal or read-only
+Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | 
+Where-Object { $_.status -ne 'Normal' -or $_.ReadOnly } | 
+Select-Object SqlInstance, Name, Status, ReadOnly | 
 Format-Table -AutoSize
 
 # are we doing backups?
@@ -20,7 +32,14 @@ Format-Table -AutoSize
     # LastDiffBackup is older than 1 day
     # LastLogBackup is older than 15 minutes - if database is in FULL recovery model
 Get-DbaDatabase -SqlInstance dbatools1, dbatools2 -ExcludeDatabase tempdb | 
-Where-Object { $_.LastBackupDate -lt (Get-Date).AddDays(-7) -or $_.LastDiffBackup -lt (Get-Date).AddDays(-1) -or ($_.RecoveryModel -eq 'Full' -and $_.LastLogBackup -lt (Get-Date).AddMinutes(-15)) } |
+Where-Object { `
+        $_.LastBackupDate -lt (Get-Date).AddDays(-7)  `
+    -or $_.LastDiffBackup -lt (Get-Date).AddDays(-1)  `
+    -or ( `
+        $_.RecoveryModel -eq 'Full' `
+        -and $_.LastLogBackup -lt (Get-Date).AddMinutes(-15) `
+        ) `
+} |
 Select-Object SqlInstance, Name, RecoveryModel, LastBackupDate, LastDiffBackup, LastLogBackup | 
 Format-Table -AutoSize
 
@@ -41,3 +60,7 @@ Format-Table -AutoSize
 Test-DbaDbCompatibility -SqlInstance dbatools1, dbatools2 |
 Where-Object { -not $_.IsEqual } |
 Select-Object SqlInstance, Database, ServerLevel, DatabaseCompatibility, IsEqual
+
+# There is so much more you can get and test with dbatools!
+# go explore the new command website:
+# https://dbatools.io/commands

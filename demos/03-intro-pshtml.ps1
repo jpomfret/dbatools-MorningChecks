@@ -1,10 +1,19 @@
+######################
+# 3. Intro to PSHTML #
+######################
+
 Import-Module PSHTML
 
 # Commands available
 Get-Command -Module PSHTML
 
+# DSL - Domain Specific Language
+# Functions that don't look like PowerShell named commands
+# PowerShell functions are normally Verb-Noun
+# PSHTML uses just nouns for HTML elements
+
 # Let's create a simple heading
-h1 -Content 'Hi dataminds 2025'
+h1 -Content 'Hi Redgate Friends!'
 
 # We can also create a simple paragraph
 p -Content 'This is a simple paragraph'
@@ -17,7 +26,7 @@ $html = html {
             title 'My First PSHTML Page'
     }
     body {
-            h1 -Content 'Hi dataminds 2025'
+            h1 -Content 'Hi Redgate Friends!'
             p -Content 'This is a simple paragraph'
     }
 }
@@ -25,6 +34,10 @@ $html | Out-File -FilePath .\web\simplePage.html
 
 code ./web/simplePage.html
 # open, format, preview
+
+##########
+# Tables #
+##########
 
 # we can also use PSHTML to easily create tables
 
@@ -55,6 +68,7 @@ code ./web/table.html
 
 # but it's still not really beautiful - add some CSS
 # but I don't know CSS, and I have no style... - https://divtable.com/table-styler/
+# you can also talk to our AI friends and create a prompt for the CSS you want
 #region CSS
 $css = @"
 table.paleBlueRows {
@@ -116,6 +130,9 @@ $html = html {
 }
 $html | Out-File .\web\table.html
 
+code ./web/table.html
+# open, format, preview
+
 # and you can get data from anywhere - any PSObject
 
 $sqlInstance = 'dbatools1'
@@ -161,3 +178,44 @@ $html = html {
     ConvertTo-PSHTMLTable -Object $results -TableClass paleBlueRows
 }
 $html | Out-File .\web\table.html
+
+code ./web/table.html
+# open, format, preview
+
+##########
+# Charts #
+##########
+
+# And finally, we can also create charts!
+# Pulling in Chart.js library
+
+$html = html {
+    head {
+        # pull in Chart.js library
+        script -src "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js" -type "text/javascript"
+    }
+    body {
+        h1 {"Pie Chart!"}
+        p { "Who doesn't love pie charts?" }
+        canvas -Height 400px -Width 400px -Id "PieCanvas" {
+        }
+        
+        script -content {
+            $data = @(34,7,11,19)
+            $labels = @("Closed","Unresolved","Pending","Open")
+            $colours = @("LightGreen","red","Blue","Yellow")
+
+            $dsb1 = New-PSHTMLChartPieDataSet -Data $data  -BackgroundColor $colours
+            New-PSHTMLChart -type Pie -DataSet $dsb1 -title "Ticket Statistics" -Labels $labels -CanvasID PieCanvas
+        }
+    }
+}
+
+
+$html | Out-File .\web\pie.html
+code ./web/pie.html
+# open, format, preview
+# preview doesn't work in the devcontainer - open in browser
+
+# PSHTML is super powerful - go explore the docs!
+# https://pshtml.readthedocs.io/en/latest/

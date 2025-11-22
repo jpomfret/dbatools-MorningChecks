@@ -1,8 +1,15 @@
-# What do we have?
+#######################
+# 1. What do we have? #
+#######################
 
-# dbatools
+# We have dbatools!
 Get-Command -Name *backup* -Module dbatools
 Find-DbaCommand -Pattern backup
+
+# help
+Get-Help Get-DbaDatabase
+Get-Help Get-DbaDatabase -Full
+Get-Help Get-DbaDatabase -ShowWindow # <-- not in the devcontainer!
 
 # two instances
 Connect-DbaInstance -SqlInstance dbatools1, dbatools2

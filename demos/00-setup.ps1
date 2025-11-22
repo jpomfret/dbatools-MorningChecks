@@ -1,4 +1,4 @@
-Import-Module dbatools, pester, pshtml, fabrictools
+Import-Module dbatools, pester, pshtml
 
 Install-DbaMaintenanceSolution -SqlInstance dbatools2 -BackupLocation /shared/ -InstallJobs -AutoScheduleJobs WeeklyFull -Confirm:$false
 
