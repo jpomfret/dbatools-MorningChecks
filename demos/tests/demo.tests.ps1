@@ -16,24 +16,24 @@ describe "Web folder is empty" {
     }
 }
 
-describe "testing the FPL token" {
-    BeforeAll{
-        #test using the token
-        $response = Invoke-WebRequest -Uri "https://fantasy.premierleague.com/api/my-team/4156860/" `
-            -Method GET `
-            -Headers @{ "Authorization" = "Bearer $FPLToken" }
-    }
-    it "FPL token should be set" {
-        $FPLToken | Should -Not -BeNullOrEmpty
-    }
-    it "FPL token should return a 200 status code" {
-        $response.StatusCode | Should -Be 200
-    }
-    it "FPL token should return picks" {
-        $picks = $response.Content | ConvertFrom-Json | select -ExpandProperty picks
-        $picks | Should -Not -BeNullOrEmpty
-    }
-}
+# describe "testing the FPL token" {
+#     BeforeAll{
+#         #test using the token
+#         $response = Invoke-WebRequest -Uri "https://fantasy.premierleague.com/api/my-team/4156860/" `
+#             -Method GET `
+#             -Headers @{ "Authorization" = "Bearer $FPLToken" }
+#     }
+#     it "FPL token should be set" {
+#         $FPLToken | Should -Not -BeNullOrEmpty
+#     }
+#     it "FPL token should return a 200 status code" {
+#         $response.StatusCode | Should -Be 200
+#     }
+#     it "FPL token should return picks" {
+#         $picks = $response.Content | ConvertFrom-Json | select -ExpandProperty picks
+#         $picks | Should -Not -BeNullOrEmpty
+#     }
+# }
 
 # fabric not needed
 # describe "Fabric Workspaces" {

@@ -1,5 +1,9 @@
 # What do we have?
 
+# dbatools
+Get-Command -Name *backup* -Module dbatools
+Find-DbaCommand -Pattern backup
+
 # two instances
 Connect-DbaInstance -SqlInstance dbatools1, dbatools2
 
