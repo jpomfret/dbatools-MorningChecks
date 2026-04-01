@@ -12,19 +12,19 @@ Get-Help Get-DbaDatabase -Full
 Get-Help Get-DbaDatabase -ShowWindow
 
 # two instances
-Connect-DbaInstance -SqlInstance $mssql1, $mssql2
+Connect-DbaInstance -SqlInstance sql1, sql2
 
 # some databases
-Get-DbaDatabase -SqlInstance $mssql1, $mssql2 -ExcludeSystem | 
+Get-DbaDatabase -SqlInstance sql1, sql2 -ExcludeSystem | 
 Select-Object SqlInstance, Name, Status, RecoveryModel, SizeMB | 
 Format-Table -AutoSize
 
 # some backups
-Get-DbaDbBackupHistory -SqlInstance $mssql1, $mssql2 |
+Get-DbaDbBackupHistory -SqlInstance sql1, sql2 |
 Select-Object SqlInstance, Database, Type, Start, Duration, End|
 Format-Table -AutoSize
 
 # some jobs
-Get-DbaAgentJob -SqlInstance $mssql1, $mssql2 |
+Get-DbaAgentJob -SqlInstance sql1, sql2 |
 Select-Object SqlInstance, Name, Enabled, LastRunOutcome, LastRunDate |
 Format-Table -AutoSize

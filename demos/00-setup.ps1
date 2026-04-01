@@ -1,34 +1,34 @@
 # run local containers
-# Check if containers already exist, only create if they don't
-if (-not (docker ps -a --format "{{.Names}}" | Where-Object { $_ -eq 'dbatools1' })) {
-    docker run -p 2500:1433 --volume shared:/shared:z --name dbatools1 --hostname dbatools1 -d dbatools/sqlinstance
-} else {
-    Write-Host "Container dbatools1 already exists, ensuring it's running..."
-    docker start dbatools1 2>$null
-}
+# # Check if containers already exist, only create if they don't
+# if (-not (docker ps -a --format "{{.Names}}" | Where-Object { $_ -eq 'dbatools1' })) {
+#     docker run -p 2500:1433 --volume shared:/shared:z --name dbatools1 --hostname dbatools1 -d dbatools/sqlinstance
+# } else {
+#     Write-Host "Container dbatools1 already exists, ensuring it's running..."
+#     docker start dbatools1 2>$null
+# }
 
-if (-not (docker ps -a --format "{{.Names}}" | Where-Object { $_ -eq 'dbatools2' })) {
-    docker run -p 2600:1433 --volume shared:/shared:z --name dbatools2 --hostname dbatools2 -d dbatools/sqlinstance2
-} else {
-    Write-Host "Container dbatools2 already exists, ensuring it's running..."
-    docker start dbatools2 2>$null
-}
+# if (-not (docker ps -a --format "{{.Names}}" | Where-Object { $_ -eq 'dbatools2' })) {
+#     docker run -p 2600:1433 --volume shared:/shared:z --name dbatools2 --hostname dbatools2 -d dbatools/sqlinstance2
+# } else {
+#     Write-Host "Container dbatools2 already exists, ensuring it's running..."
+#     docker start dbatools2 2>$null
+# }
 
-# let them start up
-Start-Sleep -Seconds 30
+# # let them start up
+# Start-Sleep -Seconds 30
 
-$cred = New-Object System.Management.Automation.PSCredential ("sqladmin", (ConvertTo-SecureString "dbatools.IO" -AsPlainText -Force))
-$global:mssql1 = Connect-DbaInstance -SqlInstance 'localhost,2500' -SqlCredential $cred
-$global:mssql2 = Connect-DbaInstance -SqlInstance 'localhost,2600' -SqlCredential $cred
+# $cred = New-Object System.Management.Automation.PSCredential ("sqladmin", (ConvertTo-SecureString "dbatools.IO" -AsPlainText -Force))
+# $global:mssql1 = Connect-DbaInstance -SqlInstance 'localhost,2500' -SqlCredential $cred
+# $global:mssql2 = Connect-DbaInstance -SqlInstance 'localhost,2600' -SqlCredential $cred
 
 Import-Module dbatools, pester, pshtml, MicrosoftFabricMgmt
 
-Set-DbaSpConfigure -SqlInstance $mssql1 -Name MaxServerMemory -Value 3072  # 3GB
-Set-DbaSpConfigure -SqlInstance $mssql2 -Name MaxServerMemory -Value 3072  # 3GB
+# Set-DbaSpConfigure -SqlInstance sql1 -Name MaxServerMemory -Value 3072  # 3GB
+# Set-DbaSpConfigure -SqlInstance sql2 -Name MaxServerMemory -Value 3072  # 3GB
 
-Install-DbaMaintenanceSolution -SqlInstance $mssql2 -BackupLocation /shared/ -InstallJobs -AutoScheduleJobs WeeklyFull -Confirm:$false
+Install-DbaMaintenanceSolution -SqlInstance sql2 -BackupLocation /shared/ -InstallJobs -AutoScheduleJobs WeeklyFull -Confirm:$false
 
-#create 20 databases on $mssql2 that have taylor swift related names
+#create 20 databases on sql2 that have taylor swift related names
 $taylorSwiftDatabases = @(
     'FearlessDB',
     'RedDB',
@@ -53,39 +53,39 @@ $taylorSwiftDatabases = @(
 )
 
 foreach ($dbName in $taylorSwiftDatabases) {
-    $null = New-DbaDatabase -SqlInstance $mssql2 -Name $dbName -Confirm:$false
+    $null = New-DbaDatabase -SqlInstance sql2 -Name $dbName -Confirm:$false
 }
 
 # offline some random dbs
-$null = (Get-Random (Get-DbaDatabase -SqlInstance $mssql2 -ExcludeSystem) -count 5) | 
+$null = (Get-Random (Get-DbaDatabase -SqlInstance sql2 -ExcludeSystem) -count 5) | 
 Set-DbaDbState -Offline -Confirm:$false
 
 # some random dbs should be simple recovery model
-$null = (Get-Random (Get-DbaDatabase -SqlInstance $mssql2 -ExcludeSystem -Status Normal) -count 5) | 
+$null = (Get-Random (Get-DbaDatabase -SqlInstance sql2 -ExcludeSystem -Status Normal) -count 5) | 
 Set-DbaDbRecoveryModel -RecoveryModel Simple -Confirm:$false
 
 # some random dbs should be read only
-$null = (Get-Random (Get-DbaDatabase -SqlInstance $mssql2 -ExcludeSystem -Status Normal) -count 2) | 
+$null = (Get-Random (Get-DbaDatabase -SqlInstance sql2 -ExcludeSystem -Status Normal) -count 2) | 
 Set-DbaDbState -ReadOnly -Confirm:$false
 
 # some random dbs should have query store disabled
-$null = (Get-Random (Get-DbaDatabase -SqlInstance $mssql2 -ExcludeSystem -Status Normal) -count 2) | 
+$null = (Get-Random (Get-DbaDatabase -SqlInstance sql2 -ExcludeSystem -Status Normal) -count 2) | 
 Foreach-Object {
     Set-DbaDbQueryStoreOption -SqlInstance $_.SqlInstance -Database $_.Name -State Off -Confirm:$false
 }
 
 # run full backups
 #TODO: figure out less backups
-$null = Backup-DbaDatabase -SqlInstance $mssql1 -Type Full 
-$null = Backup-DbaDatabase -SqlInstance $mssql1 -Type Diff 
-$null = Backup-DbaDatabase -SqlInstance $mssql1 -Type Log
-Get-DbaAgentJob -SqlInstance $mssql2 -Job 'DatabaseBackup - USER_DATABASES - FULL' | Start-DbaAgentJob -Confirm:$false
-Get-DbaAgentJob -SqlInstance $mssql2 -Job 'DatabaseBackup - USER_DATABASES - LOG' | Start-DbaAgentJob -Confirm:$false
-Get-DbaAgentJob -SqlInstance $mssql1,$mssql2 -Job 'DatabaseBackup - SYSTEM_DATABASES - FULL' | Start-DbaAgentJob -Confirm:$false
+$null = Backup-DbaDatabase -SqlInstance sql1 -Type Full 
+$null = Backup-DbaDatabase -SqlInstance sql1 -Type Diff 
+$null = Backup-DbaDatabase -SqlInstance sql1 -Type Log
+Get-DbaAgentJob -SqlInstance sql2 -Job 'DatabaseBackup - USER_DATABASES - FULL' | Start-DbaAgentJob -Confirm:$false
+Get-DbaAgentJob -SqlInstance sql2 -Job 'DatabaseBackup - USER_DATABASES - LOG' | Start-DbaAgentJob -Confirm:$false
+Get-DbaAgentJob -SqlInstance sql1,sql2 -Job 'DatabaseBackup - SYSTEM_DATABASES - FULL' | Start-DbaAgentJob -Confirm:$false
 # run diffs for all but 3 random databases
-$total = (Get-DbaDatabase -SqlInstance $mssql1 -ExcludeSystem -Status Normal | Measure-Object).Count
+$total = (Get-DbaDatabase -SqlInstance sql1 -ExcludeSystem -Status Normal | Measure-Object).Count
 
-# (Get-DbaDatabase -SqlInstance $mssql1 -ExcludeSystem -Status Normal | 
+# (Get-DbaDatabase -SqlInstance sql1 -ExcludeSystem -Status Normal | 
 # Get-Random -Count ($total-3)) |
 # Backup-DbaDatabase -Type Diff -Confirm:$false
 
@@ -96,8 +96,8 @@ Get-ChildItem -Path ./web/* | Remove-Item
 $warningPreference = 'silentlyContinue'
 
 # add custom error log message
-$null = New-DbaCustomError -SqlInstance $mssql1,$mssql2 -MessageID 70001 -Severity 16 -MessageText "Baby Dragons are called Draglets"
-$null = Invoke-DbaQuery -SqlInstance $mssql1,$mssql2 -Query "RAISERROR(70001, 1, 1, 17) WITH LOG"
+$null = New-DbaCustomError -SqlInstance sql1,sql2 -MessageID 70001 -Severity 16 -MessageText "Baby Dragons are called Draglets"
+$null = Invoke-DbaQuery -SqlInstance sql1,sql2 -Query "RAISERROR(70001, 1, 1, 17) WITH LOG"
 
 # we need a folder
 if(-not (Test-Path web)) {

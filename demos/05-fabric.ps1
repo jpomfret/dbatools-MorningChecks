@@ -38,7 +38,7 @@ if($fabWs) {
 
     $table = @{
         Object = $fabWs
-        Properties = 'WorkspaceId', 'DisplayName', 'Type'
+        Properties = 'Id', 'DisplayName'
         TableClass = 'paleBlueRows'
     }
     $body += ConvertTo-PSHTMLTable @table

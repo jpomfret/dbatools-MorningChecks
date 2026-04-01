@@ -141,7 +141,7 @@ Start-Process ./web/table.html
 
 # and you can get data from anywhere - any PSObject
 
-$sqlInstance = $mssql1
+$sqlInstance = sql1
 $database = 'pubs '
 $query = @"
 SELECT TOP (10) [au_id]

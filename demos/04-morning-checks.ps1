@@ -9,7 +9,7 @@ $emailSubject = ('Morning Checks: {0}' -f (get-date -f yyyy-MM-dd))
 $smtpServer = 'smtp.server.address'
 
 # Which instances to test?
-$instances = $mssql1, $mssql2
+$instances = 'sql1', 'sql2'
 # $instances = Import-Csv .\instances.csv
 # $instance = Get-DbaRegServer
 
@@ -235,12 +235,12 @@ $labels = @('Db State','Backups','Logs', 'Query Store')
 $dsb1 = @() 
 $instances.foreach{
     $data = @(
-        (($dbstate | Group-Object SqlInstance | Where-Object name -eq $_.DomainInstanceName | Select-Object -expand count) ?? 0),
-        (($backupIssues | Group-Object SqlInstance | Where-Object name -eq $_.DomainInstanceName | Select-Object -expand count) ?? 0),
-        (($errorLogMsgs | Group-Object SqlInstance | Where-Object name -eq $_.DomainInstanceName | Select-Object -expand count) ?? 0),
-        (($queryStoreStatus  | Group-Object SqlInstance | Where-Object name -eq $_.DomainInstanceName | Select-Object -expand count) ?? 0)
+        (($dbstate | Group-Object SqlInstance | Where-Object name -eq $_ | Select-Object -expand count) ?? 0),
+        (($backupIssues | Group-Object SqlInstance | Where-Object name -eq $_ | Select-Object -expand count) ?? 0),
+        (($errorLogMsgs | Group-Object SqlInstance | Where-Object name -eq $_ | Select-Object -expand count) ?? 0),
+        (($queryStoreStatus  | Group-Object SqlInstance | Where-Object name -eq $_ | Select-Object -expand count) ?? 0)
         )
-    $dsb1 += New-PSHTMLChartBarDataSet -Data $data -label $_.DomainInstanceName -BackgroundColor (get-pshtmlColor -color (Get-Random $colours))  
+    $dsb1 += New-PSHTMLChartBarDataSet -Data $data -label $_ -BackgroundColor (get-pshtmlColor -color (Get-Random $colours))  
 }
 
 $graph = New-PSHTMLChart -type bar -DataSet $dsb1 -title "Morning Checks Summary" -Labels $Labels -CanvasID BarCanvasID
