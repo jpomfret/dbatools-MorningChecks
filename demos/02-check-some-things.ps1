@@ -3,26 +3,26 @@
 ########################
 
 # Are the databases in the expected state?
-Get-DbaDatabase -SqlInstance dbatools1, dbatools2 |
+Get-DbaDatabase -SqlInstance $mssql1, $mssql2 |
 Select-Object SqlInstance, Name, Status, ReadOnly | 
 Format-Table -AutoSize
 
 # Are there any databases that are not in the expected state?
 # not normal
-Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | 
+Get-DbaDatabase -SqlInstance $mssql1, $mssql2 | 
 Where-Object { $_.status -ne 'Normal' } | 
 Select-Object SqlInstance, Name, Status | 
 Format-Table -AutoSize
 
 # Are there any databases that are not in the expected state?
 # not normal or read-only
-Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | 
+Get-DbaDatabase -SqlInstance $mssql1, $mssql2 | 
 Where-Object { $_.status -ne 'Normal' -or $_.ReadOnly } | 
 Select-Object SqlInstance, Name, Status, ReadOnly | 
 Format-Table -AutoSize
 
 # are we doing backups?
-Get-DbaDatabase -SqlInstance dbatools1, dbatools2 | 
+Get-DbaDatabase -SqlInstance $mssql1, $mssql2 | 
 Select-Object SqlInstance, Name, LastBackupDate, LastDiffBackup, LastLogBackup | 
 Format-Table -AutoSize
 
@@ -31,7 +31,7 @@ Format-Table -AutoSize
     # LastBackupDate is older than 7 days
     # LastDiffBackup is older than 1 day
     # LastLogBackup is older than 15 minutes - if database is in FULL recovery model
-Get-DbaDatabase -SqlInstance dbatools1, dbatools2 -ExcludeDatabase tempdb | 
+Get-DbaDatabase -SqlInstance $mssql1, $mssql2 -ExcludeDatabase tempdb | 
 Where-Object { `
         $_.LastBackupDate -lt (Get-Date).AddDays(-7)  `
     -or $_.LastDiffBackup -lt (Get-Date).AddDays(-1)  `
@@ -44,23 +44,23 @@ Select-Object SqlInstance, Name, RecoveryModel, LastBackupDate, LastDiffBackup, 
 Format-Table -AutoSize
 
 # Is Query Store enabled on all databases?
-Get-DbaDbQueryStoreOption -SqlInstance dbatools1, dbatools2 -WarningAction Ignore | 
+Get-DbaDbQueryStoreOption -SqlInstance $mssql1, $mssql2 -WarningAction Ignore | 
 Select-Object SqlInstance, Database, ActualState, QueryCaptureMode
 
 # There are test functions that can be useful too
-Test-DbaDbQueryStore -SqlInstance dbatools1, dbatools2 | 
+Test-DbaDbQueryStore -SqlInstance $mssql1, $mssql2 | 
 Select-Object SqlInstance, Database, Name, Value, IsBestPractice
 
 # Test ownership of databases
-Test-DbaDbOwner -SqlInstance dbatools1, dbatools2 | 
+Test-DbaDbOwner -SqlInstance $mssql1, $mssql2 | 
 Select-Object SqlInstance, Database, CurrentOwner, TargetOwner, OwnerMatch |
 Format-Table -AutoSize
 
 # What about compatibility levels?
-Test-DbaDbCompatibility -SqlInstance dbatools1, dbatools2 |
+Test-DbaDbCompatibility -SqlInstance $mssql1, $mssql2 |
 Where-Object { -not $_.IsEqual } |
 Select-Object SqlInstance, Database, ServerLevel, DatabaseCompatibility, IsEqual
 
 # There is so much more you can get and test with dbatools!
 # go explore the new command website:
-# https://dbatools.io/commands
+Start-Process "https://dbatools.io/commands"

@@ -1,7 +1,7 @@
 version: "3"
 services:
-    dbatools1:
-      image: jpomfret7/dbatools1:v0.17.0
+    $mssql1:
+      image: jpomfret7/$mssql1:v0.17.0
       volumes:
         - mydata:/var/opt/backups
         - shared:/shared
@@ -9,11 +9,11 @@ services:
         - ..:/workspace:cached
       ports:
         - "8801:1433"
-      container_name: dbatools1
-      hostname: dbatools1
+      container_name: $mssql1
+      hostname: $mssql1
       
-    dbatools2:
-      image: jpomfret7/dbatools2:v0.17.0
+    $mssql2:
+      image: jpomfret7/$mssql2:v0.17.0
       volumes:
         - mydata:/var/opt/backups
         - shared:/shared
@@ -22,8 +22,8 @@ services:
         - ..:/somewhereweirdworkspace:cached
       ports:
         - "8802:1433"
-      container_name: dbatools2
-      hostname: dbatools2
+      container_name: $mssql2
+      hostname: $mssql2
 
 
 volumes:

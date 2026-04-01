@@ -19,7 +19,7 @@ export SQLCMDUSER=sqladmin
 
 # rename the server 
 /opt/mssql-tools18/bin/sqlcmd -d master -Q "EXEC sp_dropserver @@SERVERNAME" -No
-/opt/mssql-tools18/bin/sqlcmd -S localhost -d master -Q "EXEC sp_addserver 'dbatools2', local" -No
+/opt/mssql-tools18/bin/sqlcmd -S localhost -d master -Q "EXEC sp_addserver '$mssql2', local" -No
 
 # import the certificate and creates endpoint 
 /opt/mssql-tools18/bin/sqlcmd -S localhost -d master -i /tmp/create-endpoint.sql -No

@@ -15,7 +15,7 @@ export SQLCMDUSER=sqladmin
 
 /opt/mssql-tools18/bin/sqlcmd -d master -Q "EXEC sp_dropserver @@SERVERNAME" -C -No
 
-/opt/mssql-tools18/bin/sqlcmd -S localhost -d master -Q "EXEC sp_addserver 'dbatools1', local" -C -No
+/opt/mssql-tools18/bin/sqlcmd -S localhost -d master -Q "EXEC sp_addserver '$mssql1', local" -C -No
 # Download instead of including it in the repo -- it reduces 
 # the size of the context and makes the secondary image smaller
 wget https://github.com/sqlcollaborative/docker/raw/a61d8e1ffb150cae767c27737ad07e730d4e76dd/sqlinstance/sql/northwind.bak

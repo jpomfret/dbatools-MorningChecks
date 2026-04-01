@@ -6,9 +6,9 @@
     ],
     "remoteEnv": {
         "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
-        "MY_SERVER": "dbatools1"
+        "MY_SERVER": "$mssql1"
     },
-    "service": "dbatools1",
+    "service": "$mssql1",
     "customizations": {
         "vscode": {
             "settings": {

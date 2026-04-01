@@ -13,7 +13,7 @@ Get-Command -Module PSHTML
 # PSHTML uses just nouns for HTML elements
 
 # Let's create a simple heading
-h1 -Content 'Hi Redgate Friends!'
+h1 -Content 'Hi Birmingham UG Friends!'
 
 # We can also create a simple paragraph
 p -Content 'This is a simple paragraph'
@@ -26,7 +26,7 @@ $html = html {
             title 'My First PSHTML Page'
     }
     body {
-            h1 -Content 'Hi Redgate Friends!'
+            h1 -Content 'Hi Birmingham UG Friends!'
             p -Content 'This is a simple paragraph'
     }
 }
@@ -34,6 +34,8 @@ $html | Out-File -FilePath .\web\simplePage.html
 
 code ./web/simplePage.html
 # open, format, preview
+
+Start-Process ./web/simplePage.html
 
 ##########
 # Tables #
@@ -65,6 +67,8 @@ ConvertTo-PSHTMLTable -Object $data | Out-File ./web/table.html
 
 code ./web/table.html
 # open, format, preview
+
+Start-Process ./web/table.html
 
 # but it's still not really beautiful - add some CSS
 # but I don't know CSS, and I have no style... - https://divtable.com/table-styler/
@@ -133,9 +137,11 @@ $html | Out-File .\web\table.html
 code ./web/table.html
 # open, format, preview
 
+Start-Process ./web/table.html
+
 # and you can get data from anywhere - any PSObject
 
-$sqlInstance = 'dbatools1'
+$sqlInstance = $mssql1
 $database = 'pubs '
 $query = @"
 SELECT TOP (10) [au_id]
@@ -182,6 +188,8 @@ $html | Out-File .\web\table.html
 code ./web/table.html
 # open, format, preview
 
+Start-Process ./web/table.html
+
 ##########
 # Charts #
 ##########
@@ -216,6 +224,8 @@ $html | Out-File .\web\pie.html
 code ./web/pie.html
 # open, format, preview
 # preview doesn't work in the devcontainer - open in browser
+
+Start-Process ./web/pie.html
 
 # PSHTML is super powerful - go explore the docs!
 # https://pshtml.readthedocs.io/en/latest/

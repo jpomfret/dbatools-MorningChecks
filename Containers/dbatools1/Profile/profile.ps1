@@ -1,4 +1,7 @@
-$containers = $SQLInstances = $dbatools1, $dbatools2 = 'dbatools1', 'dbatools2'
+$cred = New-Object System.Management.Automation.PSCredential ("sqladmin", (ConvertTo-SecureString "dbatools.IO" -AsPlainText -Force))
+$global:dbatools1 = Connect-DbaInstance -SqlInstance 'localhost,2500' -SqlCredential $cred
+$global:dbatools2 = Connect-DbaInstance -SqlInstance 'localhost,2600' -SqlCredential $cred
+
 
 #region Set up connection
 $securePassword = ('dbatools.IO' | ConvertTo-SecureString -AsPlainText -Force)
@@ -15,7 +18,7 @@ $Global:PSDefaultParameterValues = @{
 #endregion
 
 #region Clean up
-Remove-Item '/var/opt/backups/dbatools1' -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item '/var/opt/backups/$mssql1' -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item '/shared' -Recurse -Force -ErrorAction SilentlyContinue
 #endregion
 
@@ -26,7 +29,7 @@ Import-Module Pansies
 # ... Import-Module for posh-git here ...
 Import-Module posh-git
 Import-Module dbatools
-Import-Module dbachecks
+# Import-Module dbachecks
 Import-Module ImportExcel
 
 # first time it runs it warns about the libraries

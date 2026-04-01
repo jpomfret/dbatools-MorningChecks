@@ -9,7 +9,7 @@ $emailSubject = ('Morning Checks: {0}' -f (get-date -f yyyy-MM-dd))
 $smtpServer = 'smtp.server.address'
 
 # Which instances to test?
-$instances = 'dbatools1', 'dbatools2'
+$instances = $mssql1, $mssql2
 # $instances = Import-Csv .\instances.csv
 # $instance = Get-DbaRegServer
 
@@ -235,15 +235,15 @@ $labels = @('Db State','Backups','Logs', 'Query Store')
 $dsb1 = @() 
 $instances.foreach{
     $data = @(
-        (($dbstate | Group-Object sqlinstance | Where-Object name -eq $_ | Select-Object -expand count) ?? 0),
-        (($backupIssues | Group-Object sqlinstance | Where-Object name -eq $_ | Select-Object -expand count) ?? 0),
-        (($errorLogMsgs | Group-Object sqlinstance | Where-Object name -eq $_ | Select-Object -expand count) ?? 0),
-        (($queryStoreStatus  | Group-Object sqlinstance | Where-Object name -eq $_ | Select-Object -expand count) ?? 0)
+        (($dbstate | Group-Object SqlInstance | Where-Object name -eq $_.DomainInstanceName | Select-Object -expand count) ?? 0),
+        (($backupIssues | Group-Object SqlInstance | Where-Object name -eq $_.DomainInstanceName | Select-Object -expand count) ?? 0),
+        (($errorLogMsgs | Group-Object SqlInstance | Where-Object name -eq $_.DomainInstanceName | Select-Object -expand count) ?? 0),
+        (($queryStoreStatus  | Group-Object SqlInstance | Where-Object name -eq $_.DomainInstanceName | Select-Object -expand count) ?? 0)
         )
-    $dsb1 += New-PSHTMLChartBarDataSet -Data $data -label $_ -BackgroundColor (get-pshtmlColor -color (Get-Random $colours))  
+    $dsb1 += New-PSHTMLChartBarDataSet -Data $data -label $_.DomainInstanceName -BackgroundColor (get-pshtmlColor -color (Get-Random $colours))  
 }
 
-$graph = New-PSHTMLChart -type bar -DataSet $dsb1 -title "Morning Checks Summary" -Labels $Labels -CanvasID $BarCanvasID
+$graph = New-PSHTMLChart -type bar -DataSet $dsb1 -title "Morning Checks Summary" -Labels $Labels -CanvasID BarCanvasID
 
 # Now you just build the html
 $html = html {
@@ -260,7 +260,7 @@ $html = html {
             "This report contains the results of the morning checks performed on the SQL Server instances."
             ul {
                 $instances.ForEach{
-                    li { $_ }
+                    li { $_.DomainInstanceName }
                 }
             }
         }
@@ -271,7 +271,7 @@ $html = html {
                 $summary
             }
             div -class "chart-section" {
-                canvas -Height 400px -Width 400px -Id $BarCanvasID {
+                canvas -Height 400px -Width 400px -Id BarCanvasID {
                 }
 
                 script -content {
@@ -285,3 +285,5 @@ $html = html {
 }
 
 $html  > ./web/morning-checks-report.html
+
+Start-Process ./web/morning-checks-report.html

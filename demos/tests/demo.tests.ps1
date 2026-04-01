@@ -1,9 +1,10 @@
 # pester tests to make sure the environment is ready to go
-$instances = 'dbatools1', 'dbatools2'
+$cred = New-Object System.Management.Automation.PSCredential ("sqladmin", (ConvertTo-SecureString "dbatools.IO" -AsPlainText -Force))
+$instances = 'localhost,2500', 'localhost,2600'
 
 describe "SQL Instances are alive" -ForEach $instances {
     it "Instance $psitem is alive" {
-        $inst = Connect-DbaInstance $psitem 
+        $inst = Connect-DbaInstance -SqlInstance $psitem -SqlCredential $cred
         $inst | Should -Not -BeNullOrEmpty
         $inst | Should -BeOfType 'Microsoft.SqlServer.Management.Smo.Server'
     }
@@ -11,7 +12,7 @@ describe "SQL Instances are alive" -ForEach $instances {
 
 describe "Web folder is empty" {
     it "Web folder should not have any files" {
-        $webFiles = Get-ChildItem -Path ./web/* -ErrorAction SilentlyContinue
+        $webFiles = Get-ChildItem -Path ./web/* -File -ErrorAction SilentlyContinue
         $webFiles | Should -BeNullOrEmpty
     }
 }
