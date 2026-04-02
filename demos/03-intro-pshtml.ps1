@@ -141,18 +141,14 @@ Start-Process ./web/table.html
 
 # and you can get data from anywhere - any PSObject
 
-$sqlInstance = sql1
-$database = 'pubs '
+$sqlInstance = 'sql1'
+$database = 'AdventureWorks2022'
 $query = @"
-SELECT TOP (10) [au_id]
-        ,[au_lname]
-        ,[au_fname]
-        ,[phone]
-        ,[address]
-        ,[city]
-        ,[state]
-        ,[zip]
-    FROM [dbo].[authors]
+SELECT TOP (10) [ProductID]
+      ,[Name]
+      ,[ProductNumber]
+      ,[MakeFlag]
+  FROM [Production].[Product]
 "@
 
 $querySplat = @{

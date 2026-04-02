@@ -260,7 +260,7 @@ $html = html {
             "This report contains the results of the morning checks performed on the SQL Server instances."
             ul {
                 $instances.ForEach{
-                    li { $_.DomainInstanceName }
+                    li { $_ }
                 }
             }
         }
